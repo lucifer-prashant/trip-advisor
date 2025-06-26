@@ -3,8 +3,16 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { TouristSpot } from "@/services/api" // Import type from our new service
-import { getSpotsForState } from "@/services/api" // Import the fetch function
+// --- THE FIX IS HERE: Import from the new Server Action path ---
+import { getSpotsForState } from "@/app/actions/tourist-spots"
+
+// We need a simple type definition for the spots here
+export interface TouristSpot {
+	id: number
+	name: string
+	description: string | null
+	image: string
+}
 
 // A simple 'X' icon component
 const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -42,19 +50,20 @@ export const StateDetailDrawer = ({
 	const [isLoading, setIsLoading] = useState(false)
 
 	useEffect(() => {
-		// This function runs whenever the drawer is opened for a specific state
 		if (isOpen && stateName) {
 			const fetchPlaces = async () => {
 				setIsLoading(true)
+				// --- THE FIX IS HERE: Call the Server Action correctly ---
 				const spots = await getSpotsForState(stateName)
-				setPlaces(spots)
+				setPlaces(spots) // The data structure from the action is now compatible
 				setIsLoading(false)
 			}
 			fetchPlaces()
 		}
-	}, [isOpen, stateName]) // Dependencies: re-run when these change
+	}, [isOpen, stateName])
 
 	return (
+		// ... (The rest of your JSX for the drawer can remain exactly the same) ...
 		<div
 			className={`fixed inset-0 z-50 transition-opacity duration-300 ease-in-out ${
 				isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
