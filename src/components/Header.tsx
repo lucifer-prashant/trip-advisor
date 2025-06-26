@@ -2,7 +2,6 @@
 
 "use client"
 
-// 1. All the necessary imports are here
 import Image from "next/image"
 import Link from "next/link"
 import { useAuth } from "./FirebaseAuthProvider"
@@ -16,9 +15,15 @@ const Header = () => {
 		const provider = new GoogleAuthProvider()
 		try {
 			await signInWithPopup(auth, provider)
-		} catch (error: any) {
-			// This is the improved error handling
-			if (error.code !== "auth/popup-closed-by-user") {
+		} catch (error: unknown) {
+			// Use 'unknown' for type safety
+			// Check if the error is a Firebase error object before accessing its properties
+			if (
+				typeof error === "object" &&
+				error !== null &&
+				"code" in error &&
+				(error as { code: string }).code !== "auth/popup-closed-by-user"
+			) {
 				console.error("Error signing in with Google", error)
 			}
 		}
@@ -32,11 +37,9 @@ const Header = () => {
 		}
 	}
 
-	// 2. The full JSX structure is also required
 	return (
 		<header className="w-full bg-white border-b border-gray-200 sticky top-0 z-50">
 			<nav className="container mx-auto px-6 py-3 flex justify-between items-center">
-				{/* Left Side: Logo */}
 				<Link href="/" className="flex items-center gap-2">
 					<Image
 						src="/globe.svg"
@@ -49,7 +52,6 @@ const Header = () => {
 					</span>
 				</Link>
 
-				{/* Middle: Navigation Links */}
 				<div className="hidden md:flex items-center space-x-8 text-sm font-bold text-gray-800">
 					<Link href="#" className="hover:text-black">
 						Discover
@@ -60,16 +62,14 @@ const Header = () => {
 					<Link href="#" className="hover:text-black">
 						Review
 					</Link>
-					<Link href="#" className="hover:text-black">
+					<Link href="#" className="hover:text--black">
 						Forums
 					</Link>
 				</div>
 
-				{/* Right Side: Auth Button */}
 				<div className="flex items-center gap-4">
 					<span className="text-sm font-bold hidden sm:block">INR</span>
 					{user ? (
-						// If user is signed in, show avatar and sign out
 						<div className="flex items-center gap-2">
 							<Image
 								src={user.photoURL || "/default-avatar.png"}
@@ -85,7 +85,6 @@ const Header = () => {
 							</button>
 						</div>
 					) : (
-						// If not signed in, show Sign In button
 						<button
 							onClick={handleSignIn}
 							className="bg-black text-white font-bold py-2 px-4 rounded-full text-sm hover:bg-gray-800 transition-colors">
