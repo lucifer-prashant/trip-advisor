@@ -6,6 +6,7 @@ import "./globals.css"
 import { FirebaseAuthProvider } from "@/components/FirebaseAuthProvider"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import AIAssistant from "@/components/AIAssistant" // <-- Is this import here?
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
 					<main className="flex-grow container mx-auto p-4">{children}</main>
 					<Footer />
 				</FirebaseAuthProvider>
+				<AIAssistant /> {/* <-- Is this component tag here? */}
 			</body>
 		</html>
 	)
